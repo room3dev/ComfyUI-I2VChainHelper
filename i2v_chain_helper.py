@@ -38,8 +38,11 @@ class I2VChainHelper:
             "required": {
                 "images": ("IMAGE",),
                 "analysis_models": ("ANALYSIS_MODELS",),
-                "min_face_similarity": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_eyes_openness": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "min_face_similarity": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "min_eyes_openness": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01}),
+            },
+            "optional": {
+                "reference_image": ("IMAGE",),
             }
         }
 
@@ -48,16 +51,22 @@ class I2VChainHelper:
     FUNCTION = "execute"
     CATEGORY = "I2VChain"
 
-    def execute(self, images, analysis_models, min_face_similarity, min_eyes_openness):
+    def execute(self, images, analysis_models, min_face_similarity, min_eyes_openness, reference_image=None):
         if images.shape[0] == 0:
             return (images, 0, images, images, 0.0, 0.0)
 
-        # 1. Get reference embedding from the first frame
-        ref_img = tensor_to_pil(images[0])
+        # 1. Get reference embedding
+        if reference_image is not None and reference_image.shape[0] > 0:
+            ref_img = tensor_to_pil(reference_image[0])
+            print("I2VChainHelper: Using provided reference_image for identity.")
+        else:
+            ref_img = tensor_to_pil(images[0])
+            print("I2VChainHelper: No reference_image provided. Using first frame as identity reference.")
+            
         ref_embed = analysis_models.get_embeds(np.array(ref_img))
         
         if ref_embed is None:
-            print("I2VChainHelper: No face detected in the first frame. Returning empty batch.")
+            print("I2VChainHelper: No face detected in reference. Returning empty batch.")
             return (images[:0], 0, images[:0], images[:0], 0.0, 0.0)
 
         ref_embed = ref_embed / np.linalg.norm(ref_embed)

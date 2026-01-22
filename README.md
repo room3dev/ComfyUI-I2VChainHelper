@@ -25,8 +25,9 @@ pip install -r requirements.txt
 - **Inputs**:
     - `images`: Image batch.
     - `analysis_models`: Face analysis models (InsightFace or DLib).
-    - `min_face_similarity`: Minimum cosine similarity to the reference face (default: 0.6).
-    - `min_eyes_openness`: Minimum EAR score for open eyes (default: 0.2).
+    - `min_face_similarity`: Minimum cosine similarity to the reference face (default: 0.5).
+    - `min_eyes_openness`: Minimum EAR score for open eyes (default: 0.4).
+    - `reference_image` (optional): If provided, use this image as the identity reference instead of the first frame of the batch.
 - **Outputs**:
     - `trimmed_images`: The filtered and potentially shortened batch.
     - `frame_count`: Number of images in the trimmed batch.
