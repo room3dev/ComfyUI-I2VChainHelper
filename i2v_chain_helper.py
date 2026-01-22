@@ -65,28 +65,29 @@ class I2VChainHelper:
         last_good_index = 0
         pbar = ProgressBar(images.shape[0])
         
-        for i in range(images.shape[0]):
+        # Scan from last to first to save time as requested
+        for i in range(images.shape[0] - 1, -1, -1):
             img_pil = tensor_to_pil(images[i])
             img_np = np.array(img_pil)
             
             # Check similarity
             curr_embed = analysis_models.get_embeds(img_np)
             if curr_embed is None:
-                pbar.update(images.shape[0] - i)
-                break 
+                pbar.update(1)
+                continue
             
             curr_embed = curr_embed / np.linalg.norm(curr_embed)
             similarity = np.dot(ref_embed, curr_embed)
             
             if similarity < min_face_similarity:
-                pbar.update(images.shape[0] - i)
-                break 
+                pbar.update(1)
+                continue
             
             # Check eyes
             landmarks = analysis_models.get_landmarks(img_np)
             if landmarks is None:
-                pbar.update(images.shape[0] - i)
-                break 
+                pbar.update(1)
+                continue
                 
             left_eye = landmarks[3]
             right_eye = landmarks[4]
@@ -96,11 +97,13 @@ class I2VChainHelper:
             avg_ear = (ear_l + ear_r) / 2.0
             
             if avg_ear < min_eyes_openness:
-                pbar.update(images.shape[0] - i)
-                break 
+                pbar.update(1)
+                continue
                 
+            # Found the last good frame!
             last_good_index = i
-            pbar.update(1)
+            pbar.update(images.shape[0]) # Mark as complete for the UI
+            break
             
         trimmed_images = images[:last_good_index + 1]
         first_frame = trimmed_images[0:1]
