@@ -1,8 +1,8 @@
 # ComfyUI-I2VChainHelper
 
-![Workflow Diagram](assets/workflow_diagram.png)
-
 A ComfyUI custom node designed to help filter and trim image batches for consistent Image-to-Video (I2V) chaining.
+
+![Workflow Diagram](assets/workflow_diagram.png)
 
 ## Problem Statement
 When chaining video generations (using the last frame of one video to start another), the quality and identity consistency of the last frame is critical. If the last frame has a motion-blurred face, closed eyes, or loses the subject's identity, the next generation will likely drift away from the original person.
@@ -22,6 +22,7 @@ pip install -r requirements.txt
 3. Ensure you have `ComfyUI-FaceAnalysis` or a compatible model loader to provide the `ANALYSIS_MODELS` input.
 
 ## Nodes
+![Node Screenshot](assets/screenshot.png)
 
 ### I2V Chain Helper
 - **Inputs**:
