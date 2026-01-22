@@ -43,14 +43,14 @@ class I2VChainHelper:
             }
         }
 
-    RETURN_TYPES = ("IMAGE", "INT", "IMAGE", "IMAGE")
-    RETURN_NAMES = ("trimmed_images", "frame_count", "first_frame", "last_frame")
+    RETURN_TYPES = ("IMAGE", "INT", "IMAGE", "IMAGE", "FLOAT", "FLOAT")
+    RETURN_NAMES = ("trimmed_images", "frame_count", "first_frame", "last_frame", "face_similarity", "eyes_openness")
     FUNCTION = "execute"
     CATEGORY = "I2VChain"
 
     def execute(self, images, analysis_models, min_face_similarity, min_eyes_openness):
         if images.shape[0] == 0:
-            return (images, 0, images, images)
+            return (images, 0, images, images, 0.0, 0.0)
 
         # 1. Get reference embedding from the first frame
         ref_img = tensor_to_pil(images[0])
@@ -58,11 +58,13 @@ class I2VChainHelper:
         
         if ref_embed is None:
             print("I2VChainHelper: No face detected in the first frame. Returning empty batch.")
-            return (images[:0], 0, images[:0], images[:0])
+            return (images[:0], 0, images[:0], images[:0], 0.0, 0.0)
 
         ref_embed = ref_embed / np.linalg.norm(ref_embed)
 
         last_good_index = 0
+        final_similarity = 0.0
+        final_openness = 0.0
         pbar = ProgressBar(images.shape[0])
         
         # Scan from last to first to save time as requested
@@ -102,6 +104,8 @@ class I2VChainHelper:
                 
             # Found the last good frame!
             last_good_index = i
+            final_similarity = float(similarity)
+            final_openness = float(avg_ear)
             pbar.update(images.shape[0]) # Mark as complete for the UI
             break
             
@@ -109,7 +113,7 @@ class I2VChainHelper:
         first_frame = trimmed_images[0:1]
         last_frame = trimmed_images[-1:]
         
-        return (trimmed_images, trimmed_images.shape[0], first_frame, last_frame)
+        return (trimmed_images, trimmed_images.shape[0], first_frame, last_frame, final_similarity, final_openness)
 
 NODE_CLASS_MAPPINGS = {
     "I2VChainHelper": I2VChainHelper
