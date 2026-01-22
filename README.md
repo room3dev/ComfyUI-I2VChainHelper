@@ -30,6 +30,8 @@ pip install -r requirements.txt
 - **Outputs**:
     - `trimmed_images`: The filtered and potentially shortened batch.
     - `frame_count`: Number of images in the trimmed batch.
+    - `first_frame`: The first image of the trimmed batch (for convenience).
+    - `last_frame`: The last "good" image of the trimmed batch (useful for I2V chaining).
 
 ## Credits
 This project follows practices from [ComfyUI-FrameIO](https://github.com/example/ComfyUI-FrameIO) and uses logic compatible with [ComfyUI-FaceAnalysis](https://github.com/example/comfyanonymous/comfyui_faceanalysis).

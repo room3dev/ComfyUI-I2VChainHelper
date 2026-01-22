@@ -43,14 +43,14 @@ class I2VChainHelper:
             }
         }
 
-    RETURN_TYPES = ("IMAGE", "INT")
-    RETURN_NAMES = ("trimmed_images", "frame_count")
+    RETURN_TYPES = ("IMAGE", "INT", "IMAGE", "IMAGE")
+    RETURN_NAMES = ("trimmed_images", "frame_count", "first_frame", "last_frame")
     FUNCTION = "execute"
     CATEGORY = "I2VChain"
 
     def execute(self, images, analysis_models, min_face_similarity, min_eyes_openness):
         if images.shape[0] == 0:
-            return (images, 0)
+            return (images, 0, images, images)
 
         # 1. Get reference embedding from the first frame
         ref_img = tensor_to_pil(images[0])
@@ -58,7 +58,7 @@ class I2VChainHelper:
         
         if ref_embed is None:
             print("I2VChainHelper: No face detected in the first frame. Returning empty batch.")
-            return (images[:0], 0)
+            return (images[:0], 0, images[:0], images[:0])
 
         ref_embed = ref_embed / np.linalg.norm(ref_embed)
 
@@ -103,7 +103,10 @@ class I2VChainHelper:
             pbar.update(1)
             
         trimmed_images = images[:last_good_index + 1]
-        return (trimmed_images, trimmed_images.shape[0])
+        first_frame = trimmed_images[0:1]
+        last_frame = trimmed_images[-1:]
+        
+        return (trimmed_images, trimmed_images.shape[0], first_frame, last_frame)
 
 NODE_CLASS_MAPPINGS = {
     "I2VChainHelper": I2VChainHelper
