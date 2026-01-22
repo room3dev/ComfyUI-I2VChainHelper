@@ -1,5 +1,7 @@
 # ComfyUI-I2VChainHelper
 
+![Workflow Diagram](assets/workflow_diagram.png)
+
 A ComfyUI custom node designed to help filter and trim image batches for consistent Image-to-Video (I2V) chaining.
 
 ## Problem Statement
