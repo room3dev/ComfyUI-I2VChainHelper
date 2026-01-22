@@ -36,5 +36,5 @@ pip install -r requirements.txt
     - `face_similarity`: The face similarity score of the last good frame (0..1).
     - `eyes_openness`: The eye openness (EAR score) of the last good frame.
 
-## Credits
-This project follows practices from [ComfyUI-FrameIO](https://github.com/example/ComfyUI-FrameIO) and uses logic compatible with [ComfyUI-FaceAnalysis](https://github.com/example/comfyanonymous/comfyui_faceanalysis).
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
