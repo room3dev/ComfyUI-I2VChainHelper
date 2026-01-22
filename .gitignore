@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+example/
+.agent/
+.gemini/
+.idea/
+.vscode/
